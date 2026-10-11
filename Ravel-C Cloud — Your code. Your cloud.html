@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ravel-C Cloud — Your code. Your cloud.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--bg:#07120C;--sf:#0F2217;--ln:#1F3A2A;--fg:#EAF2EC;--mu:#9DB3A5;--ac:#FF7A2B;--gr:#2FBF6B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F6F8F5;--sf:#fff;--ln:#D8DFD9;--fg:#0C1A12;--mu:#4A5A50;--ac:#C44E0B;--gr:#1E8A3E}}
+:root[data-theme="light"]{--bg:#F6F8F5;--sf:#fff;--ln:#D8DFD9;--fg:#0C1A12;--mu:#4A5A50;--ac:#C44E0B;--gr:#1E8A3E}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'DM Sans',system-ui,sans-serif;line-height:1.55;overflow-x:hidden}
+.h{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.025em;font-weight:800;line-height:1.04}
+.mu{color:var(--mu)}.ac{color:var(--ac)}.sf{background:var(--sf)}.bd{border:1px solid var(--ln)}
+.grad{background:linear-gradient(100deg,#FF7A2B,#FFC24B 45%,#2FBF6B);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:shift 6s linear infinite}
+@keyframes shift{to{background-position:200% center}}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--ln)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border-radius:12px;font-weight:700;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.b1{background:#FF7A2B;color:#0C1A12;box-shadow:0 8px 30px -8px #FF7A2B99}
+.b2{border:1px solid var(--ln);color:var(--fg)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:28px;transition:transform .35s,border-color .35s}
+.tilt:hover{transform:perspective(900px) rotateX(4deg) rotateY(-5deg) translateY(-8px);border-color:var(--ac)}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--ac);text-transform:uppercase}
+.js .rv{opacity:0;transform:translateY(28px);transition:opacity .8s,transform .8s}
+.js .rv.in{opacity:1;transform:none}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none}
+.mq{display:flex;gap:14px;width:max-content;animation:mq 28s linear infinite}
+.mq:hover{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.pill{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:var(--sf);border:1px solid var(--ln);font-weight:700;white-space:nowrap}
+.soon{border-style:dashed;color:var(--mu)}
+.chip{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:10px;background:var(--sf);border:1px solid var(--ln);font-size:15px}
+.pro{position:relative;border:0;background:linear-gradient(var(--sf),var(--sf)) padding-box,linear-gradient(120deg,#FF7A2B,#2FBF6B,#FF7A2B) border-box;border:2px solid transparent;animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 50px -10px #FF7A2B88}}
+.card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.card li:before{content:"✓ ";color:var(--gr);font-weight:700}
+.term{font-family:ui-monospace,Menlo,monospace;font-size:13.5px}
+.term div{opacity:0;animation:ln .5s forwards}
+@keyframes ln{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.tbl{width:100%;min-width:760px;border-collapse:collapse}
+.tbl th,.tbl td{padding:15px 18px;text-align:left;border-bottom:1px solid var(--ln);font-size:15px}
+.tbl th{color:var(--mu);font-size:14px}
+.us{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+details{border:1px solid var(--ln);border-radius:14px;padding:18px 22px;background:var(--sf)}
+summary{font-weight:700;cursor:pointer;font-size:17px}
+details p{margin:12px 0 0;color:var(--mu)}
+a{color:inherit}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}.term div{opacity:1}}
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<header class="nav">
+<div class="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
+<a href="#top" class="h text-[22px] no-underline flex items-center gap-2.5"><span class="inline-flex w-8 h-8 rounded-lg items-center justify-center text-[#0C1A12]" style="background:#FF7A2B">R</span>Ravel-C</a>
+<nav class="hidden lg:flex gap-7 text-[15px] font-medium">
+<a href="#produits" class="no-underline">Produits</a><a href="#tarifs" class="no-underline">Tarifs</a><a href="#paiement" class="no-underline">Paiement</a><a href="#comparatif" class="no-underline">Comparatif</a><a href="#confiance" class="no-underline">Confiance</a><a href="#faq" class="no-underline">FAQ</a>
+</nav>
+<a href="#contact" class="btn b1 !min-h-[44px]">Accès anticipé</a>
+</div>
+</header>
+
+<main id="top">
+<section class="relative overflow-hidden">
+<div class="glow w-[480px] h-[480px] bg-[#FF7A2B] -top-32 -right-24"></div>
+<div class="glow w-[420px] h-[420px] bg-[#2FBF6B] top-48 -left-40"></div>
+<div class="relative max-w-6xl mx-auto px-6 pt-16 pb-24 grid lg:grid-cols-2 gap-10 items-center">
+<div class="flex flex-col gap-6">
+<span class="chip w-fit"><span class="w-2 h-2 rounded-full mr-2 bg-[#2FBF6B] animate-pulse"></span>Nouveau · accès anticipé ouvert</span>
+<h1 class="h text-[44px] sm:text-[72px]">Your code.<br><span class="grad">Your cloud.</span></h1>
+<p class="text-lg mu max-w-xl">Votre code, notre infrastructure. Hébergez sites, API et applications depuis GitHub, avec HTTPS, MongoDB et un prix mensuel fixe en FCFA. À partir de 5 000 FCFA/mois.</p>
+<div class="flex flex-wrap gap-3"><a href="#tarifs" class="btn b1">Voir les formules</a><a href="#contact" class="btn b2">Parler à un humain</a></div>
+<div class="text-sm mu">Orange Money · MTN · Airtel Money · myNita · Amanata · Visa · Mastercard</div>
+</div>
+<div class="relative">
+<canvas id="gl" class="w-full h-[360px] sm:h-[460px]" aria-hidden="true"></canvas>
+<div class="term card !p-5 absolute left-0 right-0 sm:left-6 sm:right-6 bottom-0 backdrop-blur" style="background:color-mix(in srgb,var(--sf) 88%,transparent)">
+<div style="animation-delay:.4s" class="mu">$ git push origin main</div>
+<div style="animation-delay:1.2s">→ Build depuis GitHub…</div>
+<div style="animation-delay:2s">→ Application déployée</div>
+<div style="animation-delay:2.8s;color:var(--gr)">✓ HTTPS actif · en ligne sur mon-app.ravel-c.com</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="paiement" class="py-14 border-y border-[var(--ln)] sf overflow-hidden">
+<div class="max-w-6xl mx-auto px-6 mb-6 rv"><h2 class="h text-[28px] sm:text-4xl">Payez comme vous payez déjà</h2><p class="mu mt-2">Mobile money local ou carte bancaire, directement en FCFA.</p></div>
+<div class="mq" aria-label="Moyens de paiement">
+<span class="pill">Orange Money</span><span class="pill">MTN Mobile Money</span><span class="pill">Airtel Money</span><span class="pill">myNita</span><span class="pill">Amanata</span><span class="pill">Visa</span><span class="pill">Mastercard</span><span class="pill soon">Wave · bientôt</span>
+<span class="pill">Orange Money</span><span class="pill">MTN Mobile Money</span><span class="pill">Airtel Money</span><span class="pill">myNita</span><span class="pill">Amanata</span><span class="pill">Visa</span><span class="pill">Mastercard</span><span class="pill soon">Wave · bientôt</span>
+</div>
+</section>
+
+<section id="produits" class="max-w-6xl mx-auto px-6 pt-24">
+<div class="rv"><div class="eyebrow">La plateforme</div><h2 class="h text-4xl sm:text-5xl mt-3">Trois produits, une seule plateforme</h2></div>
+<div class="grid md:grid-cols-3 gap-6 mt-10">
+<div class="card tilt rv"><div class="h text-5xl ac">01</div><div class="h text-2xl mt-4">Ravel-C Cloud</div><p class="mu mt-2">Hébergement de vos sites statiques et applications web dynamiques, avec HTTPS et quotas clairs.</p></div>
+<div class="card tilt rv"><div class="h text-5xl ac">02</div><div class="h text-2xl mt-4">Ravel-C Deploy</div><p class="mu mt-2">Connectez GitHub : chaque mise à jour du code redéploie votre application. Journaux inclus.</p></div>
+<div class="card tilt rv"><div class="h text-5xl ac">03</div><div class="h text-2xl mt-4">Ravel-C Database</div><p class="mu mt-2">Bases MongoDB hébergées avec votre formule, de 1 à 5 selon vos besoins.</p></div>
+</div>
+<div class="flex flex-wrap gap-2.5 mt-8 items-center rv"><strong class="mr-2">Compatible avec :</strong><span class="chip">React</span><span class="chip">Next.js</span><span class="chip">Node.js</span><span class="chip">Express</span><span class="chip">Python</span><span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">MongoDB</span><span class="chip">Sites statiques</span></div>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 pt-24">
+<div class="rv"><div class="eyebrow">Pensé pour les développeurs</div><h2 class="h text-4xl sm:text-5xl mt-3">Ce que vous gagnez dès le premier jour</h2></div>
+<div class="grid md:grid-cols-3 gap-5 mt-10">
+<div class="card tilt rv md:col-span-2"><strong class="text-xl">Push to deploy</strong><p class="mu mt-2">Un git push et votre application est mise à jour. Pas de serveur à configurer, pas de pipeline à monter.</p></div>
+<div class="card tilt rv"><strong class="text-xl">Journaux d'exécution</strong><p class="mu mt-2">Comprenez une erreur sans deviner.</p></div>
+<div class="card tilt rv"><strong class="text-xl">Surveillance et alertes</strong><p class="mu mt-2">Incluses dès Business, avancées en Pro.</p></div>
+<div class="card tilt rv"><strong class="text-xl">Sauvegardes quotidiennes</strong><p class="mu mt-2">Prévues dès Business, rétention cible de 7 jours (14 en Pro).</p></div>
+<div class="card tilt rv"><strong class="text-xl">Zéro mauvaise surprise</strong><p class="mu mt-2">Alerte avant tout dépassement. Rien de payant sans votre accord.</p></div>
+</div>
+</section>
+
+<section id="tarifs" class="max-w-6xl mx-auto px-6 pt-24">
+<div class="rv"><div class="eyebrow">Tarifs</div><h2 class="h text-4xl sm:text-5xl mt-3">Quatre formules, un prix clair</h2><p class="mu mt-3">Prix mensuels en FCFA. Changez de formule quand votre projet grandit.</p></div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10 items-stretch">
+<div class="card rv flex flex-col gap-3"><div class="h text-2xl">Starter</div><div class="mu text-sm">Projets indépendants, petits sites</div><div><span class="h text-4xl">5 000</span> <span class="mu">FCFA/mois</span></div>
+<ul><li>5 sites statiques</li><li>1 application dynamique</li><li>1 base MongoDB (1 Go)</li><li>5 Go de stockage</li><li>100 Go de bande passante</li><li>500 min de build/mois</li></ul><a href="#contact" class="btn b2 mt-auto">Choisir Starter</a></div>
+<div class="card pro rv flex flex-col gap-3"><span class="absolute -top-3.5 left-6 text-xs font-bold px-3 py-1 rounded-full text-[#0C1A12]" style="background:#FF7A2B">LE PLUS CHOISI</span><div class="h text-2xl">Business</div><div class="mu text-sm">Petites entreprises et agences</div><div><span class="h text-4xl">15 000</span> <span class="mu">FCFA/mois</span></div>
+<ul><li>15 sites statiques</li><li>3 applications dynamiques</li><li>2 bases MongoDB (5 Go)</li><li>15 Go de stockage</li><li>500 Go de bande passante</li><li>1 500 min de build/mois</li><li>Surveillance et alertes</li><li>Support en heures ouvrées</li><li>Sauvegardes quotidiennes prévues</li></ul><a href="#contact" class="btn b1 mt-auto">Choisir Business</a></div>
+<div class="card rv flex flex-col gap-3"><div class="h text-2xl">Pro</div><div class="mu text-sm">Agences et applications en croissance</div><div><span class="h text-4xl">35 000</span> <span class="mu">FCFA/mois</span></div>
+<ul><li>30 sites statiques</li><li>8 applications dynamiques</li><li>5 bases MongoDB (15 Go)</li><li>30 Go de stockage</li><li>1 To de bande passante</li><li>3 000 min de build/mois</li><li>Alertes avancées</li><li>Support prioritaire</li><li>Sauvegardes quotidiennes prévues</li></ul><a href="#contact" class="btn b2 mt-auto">Choisir Pro</a></div>
+<div class="card rv flex flex-col gap-3"><div class="h text-2xl">Enterprise</div><div class="mu text-sm">Besoins spécifiques, charges importantes</div><div><span class="h text-4xl">Sur devis</span></div>
+<ul><li>CPU et mémoire sur mesure</li><li>Stockage et bases adaptés</li><li>Accompagnement à la migration</li><li>Sauvegarde et restauration contractuelles</li><li>Infrastructure isolée à l'étude</li></ul><a href="#contact" class="btn b2 mt-auto">Demander un devis</a></div>
+</div>
+<p class="text-sm mu mt-6">Les budgets CPU et mémoire sont des enveloppes partagées, pas des serveurs dédiés. Nom de domaine (achat et renouvellement) non inclus.</p>
+</section>
+
+<section id="comparatif" class="max-w-6xl mx-auto px-6 pt-24">
+<div class="rv"><div class="eyebrow">Comparatif</div><h2 class="h text-4xl sm:text-5xl mt-3">Pourquoi Ravel-C plutôt qu'une plateforme étrangère ?</h2><p class="mu mt-3 max-w-2xl">Render, Vercel et OVH sont de bons outils. Mais ils n'ont pas été pensés pour les développeurs et agences d'Afrique de l'Ouest.</p></div>
+<div class="overflow-x-auto mt-10 card !p-0 rv">
+<table class="tbl">
+<thead><tr><th></th><th class="us ac !text-base">Ravel-C</th><th>Render</th><th>Vercel</th><th>OVH</th></tr></thead>
+<tbody>
+<tr><td><strong>Devise de facturation</strong></td><td class="us"><strong>FCFA</strong></td><td>USD</td><td>USD</td><td>EUR</td></tr>
+<tr><td><strong>Moyens de paiement</strong></td><td class="us"><strong>Mobile money local + Visa et Mastercard</strong></td><td>Cartes internationales</td><td>Cartes internationales</td><td>Cartes et moyens européens</td></tr>
+<tr><td><strong>Prix d'entrée</strong></td><td class="us"><strong>5 000 FCFA/mois, fixe</strong></td><td>Par service, en dollars</td><td>Abonnement + usage</td><td>Par ressource</td></tr>
+<tr><td><strong>Coût prévisible</strong></td><td class="us"><strong>Quotas clairs, alerte avant dépassement</strong></td><td>Selon les instances</td><td>Selon l'usage</td><td>Selon les ressources</td></tr>
+<tr><td><strong>MongoDB</strong></td><td class="us"><strong>Inclus dans chaque formule</strong></td><td>Base externe</td><td>Via partenaire</td><td>Service séparé</td></tr>
+<tr><td><strong>Déploiement GitHub</strong></td><td class="us"><strong>Inclus</strong></td><td>Oui</td><td>Oui</td><td>Configuration manuelle</td></tr>
+<tr><td><strong>Support</strong></td><td class="us"><strong>Équipe humaine, accessible, en français</strong></td><td>Selon l'offre</td><td>Selon l'offre</td><td>Selon l'offre</td></tr>
+<tr><td><strong>Mise en service accompagnée</strong></td><td class="us"><strong>Incluse</strong></td><td>Documentation</td><td>Documentation</td><td>Documentation</td></tr>
+</tbody></table>
+</div>
+<p class="text-sm mu mt-4 max-w-3xl">Comparatif indicatif fondé sur les offres publiques de chaque fournisseur, à vérifier avant publication.</p>
+</section>
+
+<section id="confiance" class="max-w-6xl mx-auto px-6 pt-24">
+<div class="rv"><div class="eyebrow">Confiance et transparence</div><h2 class="h text-4xl sm:text-5xl mt-3">Nous ne promettons que ce que nous pouvons tenir</h2></div>
+<div class="grid md:grid-cols-3 gap-6 mt-10">
+<div class="card rv"><strong class="text-xl">Sécurité</strong><p class="mu mt-2">HTTPS sur tous les sites. Identifiants et secrets de déploiement protégés. Les applications abusives peuvent être suspendues.</p></div>
+<div class="card rv"><strong class="text-xl">Sauvegardes honnêtes</strong><p class="mu mt-2">Une sauvegarde n'est annoncée comme fiable qu'après un test de restauration réussi.</p></div>
+<div class="card rv"><strong class="text-xl">Disponibilité</strong><p class="mu mt-2">Pas de promesse de 99,9 % avant d'avoir la supervision et les procédures pour la tenir.</p></div>
+</div>
+<div class="card rv mt-6 flex flex-col md:flex-row gap-6 md:items-center justify-between">
+<div><div class="eyebrow">Bientôt sur Ravel-C</div><p class="mu mt-2 max-w-xl">En préparation, annoncé quand ce sera prêt :</p></div>
+<div class="flex flex-wrap gap-2.5"><span class="chip">Paiement Wave</span><span class="chip">PostgreSQL</span><span class="chip">CDN</span><span class="chip">Déploiements avancés</span><span class="chip">Isolation renforcée</span></div>
+</div>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 pt-24">
+<div class="card rv grid md:grid-cols-2 gap-8 items-center">
+<div><div class="eyebrow">Qui est derrière Ravel-C</div><h2 class="h text-3xl sm:text-4xl mt-3">Construit à Niamey, pour les développeurs d'ici</h2></div>
+<p class="mu">Ravel-C est lancé par SmartLimb, agence web basée à Niamey, Niger. Nous voulons qu'un développeur ou une agence d'Afrique de l'Ouest puisse publier son projet simplement, payer en FCFA et parler à une vraie personne. [Ajoutez ici votre équipe, votre adresse et vos informations légales.]</p>
+</div>
+</section>
+
+<section id="faq" class="max-w-3xl mx-auto px-6 pt-24">
+<h2 class="h text-4xl sm:text-5xl rv">Questions fréquentes</h2>
+<div class="flex flex-col gap-3 mt-8 rv">
+<details><summary>Puis-je utiliser mon propre nom de domaine ?</summary><p>Oui, dans le périmètre technique pris en charge. L'achat et le renouvellement du domaine ne sont pas inclus.</p></details>
+<details><summary>Comment puis-je payer ?</summary><p>Orange Money, MTN Mobile Money, Airtel Money, myNita, Amanata, Visa ou Mastercard. Wave arrive bientôt.</p></details>
+<details><summary>Que se passe-t-il si je dépasse mes limites ?</summary><p>Nous vous alertons avant tout dépassement facturable. Aucune option payante n'est activée sans votre accord.</p></details>
+<details><summary>Mes données sont-elles sauvegardées ?</summary><p>Des sauvegardes quotidiennes sont prévues dès Business (rétention cible : 7 jours, 14 en Pro), après activation et test de restauration.</p></details>
+<details><summary>Que faire si mon projet grandit ?</summary><p>Passez à une formule supérieure, ou demandez un devis Enterprise pour une architecture adaptée.</p></details>
+</div>
+</section>
+
+<section id="contact" class="relative overflow-hidden mt-24">
+<div class="glow w-[500px] h-[300px] bg-[#FF7A2B] left-1/2 -translate-x-1/2 top-10"></div>
+<div class="relative max-w-3xl mx-auto px-6 py-24 text-center flex flex-col items-center gap-5 rv">
+<h2 class="h text-4xl sm:text-6xl">Prêt à lancer votre projet sur <span class="grad">Ravel-C</span> ?</h2>
+<p class="mu text-lg max-w-xl">Dites-nous ce que vous voulez déployer, on vous recommande la bonne formule.</p>
+<a href="https://wa.me/22787727501" class="btn b1">Nous écrire sur WhatsApp</a>
+<div class="text-sm mu">WhatsApp +227 87 72 75 01 · contact@ravel-c.com · Niamey, Niger</div>
+</div>
+</section>
+</main>
+
+<footer class="border-t border-[var(--ln)] py-8 text-sm mu">
+<div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row gap-4 justify-between">
+<div>© Ravel-C · Ravel Cloud · Une initiative SmartLimb</div>
+<div class="flex flex-wrap gap-5"><a href="#">Conditions de service</a><a href="#">Confidentialité</a><a href="#">Mentions légales</a><a href="#">Documentation</a></div>
+</div>
+</footer>
+
+<script>
+try{
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+}catch(e){document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in')})}
+try{
+var el=document.getElementById('gl'),r=new THREE.WebGLRenderer({canvas:el,antialias:true,alpha:true});
+r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+var s=new THREE.Scene(),c=new THREE.PerspectiveCamera(45,1,.1,100);c.position.z=9;
+var g=new THREE.Group();s.add(g);
+function wf(geo,col,op){return new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:col,wireframe:true,transparent:true,opacity:op}))}
+var core=wf(new THREE.IcosahedronGeometry(1.7,1),0xFF7A2B,.9);g.add(core);
+var inner=wf(new THREE.OctahedronGeometry(.9,0),0x2FBF6B,.9);g.add(inner);
+var rings=[];[2.7,3.4].forEach(function(rad,i){var t=new THREE.Mesh(new THREE.TorusGeometry(rad,.012,8,140),new THREE.MeshBasicMaterial({color:i?0x2FBF6B:0xFF7A2B,transparent:true,opacity:.7}));t.rotation.x=1.2+i*.5;g.add(t);rings.push(t)});
+var cubes=[];for(var i=0;i<16;i++){var m=wf(new THREE.BoxGeometry(.34,.34,.34),i%3?0x2FBF6B:0xFF7A2B,.95);m.userData={a:i*.39,rad:2.6+(i%4)*.35,sp:.003+(i%5)*.0012,y:(i%7-3)*.35};g.add(m);cubes.push(m)}
+var pg=new THREE.BufferGeometry(),pa=[];for(var j=0;j<260;j++){pa.push((Math.random()-.5)*14,(Math.random()-.5)*10,(Math.random()-.5)*8)}
+pg.setAttribute('position',new THREE.Float32BufferAttribute(pa,3));
+s.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0x9DB3A5,size:.03})));
+var mx=0,my=0;window.addEventListener('pointermove',function(e){mx=e.clientX/window.innerWidth-.5;my=e.clientY/window.innerHeight-.5});
+function size(){var w=el.clientWidth,h=el.clientHeight;r.setSize(w,h,false);c.aspect=w/h;c.updateProjectionMatrix()}
+window.addEventListener('resize',size);size();
+var still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tick(){core.rotation.y+=.006;core.rotation.x+=.002;inner.rotation.y-=.01;inner.rotation.z+=.006;
+rings.forEach(function(t,i){t.rotation.z+=.004*(i?-1:1)});
+cubes.forEach(function(m){var d=m.userData;d.a+=d.sp;m.position.set(Math.cos(d.a)*d.rad,d.y,Math.sin(d.a)*d.rad);m.rotation.x+=.01;m.rotation.y+=.012});
+g.rotation.y+=(mx*1.2-g.rotation.y)*.04;g.rotation.x+=(my*.8-g.rotation.x)*.04;
+r.render(s,c);if(!still)requestAnimationFrame(tick)}
+tick();
+}catch(e){}
+</script>
+</body>
+</html>
