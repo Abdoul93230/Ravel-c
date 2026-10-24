@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Générateur de Factures Certifiées — Ravel-C Cloud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root {
+  --bg: #07120C;
+  --sf: #0E1F15;
+  --sf-card: #12281C;
+  --ln: #1F3A2A;
+  --fg: #EAF2EC;
+  --mu: #9DB3A5;
+  --ac: #FF7A2B;
+  --gr: #2FBF6B;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+.h-font {
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.mono-font {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom inputs styling */
+.custom-input {
+  background: rgba(14, 31, 21, 0.7);
+  border: 1px solid var(--ln);
+  color: var(--fg);
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 100%;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: var(--ac);
+  box-shadow: 0 0 0 3px rgba(255, 122, 43, 0.15);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FF7A2B 0%, #FF944D 100%);
+  color: #0C1A12;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px rgba(255, 122, 43, 0.5);
+}
+
+.btn-secondary {
+  background: var(--sf-card);
+  border: 1px solid var(--ln);
+  color: var(--fg);
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--mu);
+  transform: translateY(-1px);
+}
+
+/* The A4 Invoice Sheet */
+.invoice-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 18mm;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* Print styles for pixel-perfect PDF export */
+* {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .invoice-sheet {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 10mm 14mm !important;
+    width: 100% !important;
+    min-height: 275mm !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}
+
+/* Certified Stamp Watermark */
+.stamp-badge {
+  border: 3px solid;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  display: inline-block;
+  transform: rotate(-6deg);
+  opacity: 0.92;
+}
+
+.stamp-paid {
+  border-color: #15803d;
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.06);
+}
+
+.stamp-pending {
+  border-color: #c2410c;
+  color: #c2410c;
+  background: rgba(234, 88, 12, 0.06);
+}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- Top Navigation Bar (Hidden in Print) -->
+<header class="no-print border-b border-[var(--ln)] bg-[var(--sf)]/80 backdrop-blur sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="inline-flex items-center gap-2.5 h-font font-extrabold text-xl text-white">
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-[#0C1A12] bg-[#FF7A2B] font-bold text-lg">R</span>
+        Ravel-C
+      </a>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-[var(--sf-card)] border border-[var(--ln)] text-[var(--mu)]">
+        Facturation Officielle & Pro
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="window.print()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2 text-sm shadow-md">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span>Imprimer / Exporter PDF</span>
+      </button>
+      <button onclick="shareWhatsApp()" class="btn-secondary px-3.5 py-2 rounded-lg flex items-center gap-2 text-sm hover:border-[#2FBF6B]">
+        <svg class="w-4 h-4 text-[#2FBF6B]" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+        <span class="hidden sm:inline">Message WhatsApp</span>
+      </button>
+      <a href="index.html" class="text-sm text-[var(--mu)] hover:text-white px-2 py-1">
+        Retour au site
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+    
+    <!-- LEFT PANEL: Invoice Controls & Data Input (Hidden in Print) -->
+    <div class="no-print xl:col-span-5 bg-[var(--sf)] border border-[var(--ln)] rounded-2xl p-5 sm:p-6 space-y-6">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-[var(--ln)]">
+        <div>
+          <h2 class="h-font text-xl font-bold text-white">Éditeur de facture</h2>
+          <p class="text-xs text-[var(--mu)]">Remplissez les détails, la prévisualisation se met à jour en direct.</p>
+        </div>
+        <button onclick="resetDefaults()" class="text-xs text-[var(--mu)] hover:text-[var(--ac)] underline">
+          Réinitialiser
+        </button>
+      </div>
+
+      <!-- Issuer Legal Info (Editable) -->
+      <div class="space-y-3 p-3 bg-[var(--sf-card)] border border-[var(--ln)] rounded-xl">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-[var(--ac)]">🏢 Émetteur (Votre entreprise)</div>
+        <div>
+          <label class="block text-[11px] text-[var(--mu)] mb-0.5">Nom de l'agence / entreprise</label>
+          <input type="text" id="inpIssuerName" class="custom-input text-xs" value="SmartLimb SARL" oninput="updateInvoice()">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-[var(--mu)] mb-0.5">NIF (ou laisser vide)</label>
+            <input type="text" id="inpIssuerNif" class="custom-input text-xs" placeholder="Ex: 12345/P" value="" oninput="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-[11px] text-[var(--mu)] mb-0.5">RCCM (ou laisser vide)</label>
+            <input type="text" id="inpIssuerRccm" class="custom-input text-xs" placeholder="Ex: NI-NIA-..." value="" oninput="updateInvoice()">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] text-[var(--mu)] mb-0.5">Adresse & Ville</label>
+          <input type="text" id="inpIssuerAddress" class="custom-input text-xs" value="Niamey, République du Niger" oninput="updateInvoice()">
+        </div>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--mu)] mb-2">Formules Ravel-C rapides</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="applyPreset('starter')" class="px-2.5 py-2 rounded-lg bg-[var(--sf-card)] border border-[var(--ln)] hover:border-[var(--ac)] text-xs text-left transition">
+            <div class="font-bold text-white">Starter</div>
+            <div class="text-[var(--ac)] font-semibold">5 000 F</div>
+          </button>
+          <button type="button" onclick="applyPreset('business')" class="px-2.5 py-2 rounded-lg bg-[var(--sf-card)] border border-[var(--ac)] text-xs text-left transition relative">
+            <span class="absolute -top-1.5 -right-1 text-[9px] bg-[var(--ac)] text-black px-1.5 rounded-full font-bold">Populaire</span>
+            <div class="font-bold text-white">Business</div>
+            <div class="text-[var(--ac)] font-semibold">15 000 F</div>
+          </button>
+          <button type="button" onclick="applyPreset('pro')" class="px-2.5 py-2 rounded-lg bg-[var(--sf-card)] border border-[var(--ln)] hover:border-[var(--ac)] text-xs text-left transition">
+            <div class="font-bold text-white">Pro</div>
+            <div class="text-[var(--ac)] font-semibold">35 000 F</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Invoice Details (Number, Dates, Status) -->
+      <div class="space-y-3 pt-2">
+        <div class="text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">Paramètres de la facture</div>
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">N° de Facture</label>
+            <input type="text" id="inpInvoiceNum" class="custom-input mono-font" value="RC-2026-0001" oninput="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Statut du paiement</label>
+            <select id="inpStatus" class="custom-input" onchange="updateInvoice()">
+              <option value="PAID" selected>Payée (Certifiée)</option>
+              <option value="PENDING">En attente de paiement</option>
+              <option value="DRAFT">Devis / Brouillon</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Date d'émission (Création)</label>
+            <input type="date" id="inpDateEmission" class="custom-input" onchange="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Date limite de paiement (Échéance)</label>
+            <input type="date" id="inpDateEcheance" class="custom-input" onchange="updateInvoice()">
+          </div>
+        </div>
+
+        <div class="p-3 bg-[var(--sf-card)] border border-[var(--ln)] rounded-xl space-y-2">
+          <div class="text-[11px] font-bold text-[var(--ac)] uppercase tracking-wider flex items-center gap-1.5">
+            <span>📅 Période de validité de l'abonnement</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] text-[var(--mu)] mb-1">Du (Date de début)</label>
+              <input type="date" id="inpPeriodStart" class="custom-input" onchange="updateInvoice()">
+            </div>
+            <div>
+              <label class="block text-[11px] text-[var(--mu)] mb-1">Au (Date de fin)</label>
+              <input type="date" id="inpPeriodEnd" class="custom-input" onchange="updateInvoice()">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] text-[var(--mu)] mb-1">Libellé du cycle</label>
+            <input type="text" id="inpCycleLabel" class="custom-input text-xs" value="1er mois d'abonnement" oninput="updateInvoice()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Client Details -->
+      <div class="space-y-3 pt-2 border-t border-[var(--ln)]">
+        <div class="text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">Informations du Client</div>
+        <div>
+          <label class="block text-xs text-[var(--mu)] mb-1">Nom du client ou de l'entreprise</label>
+          <input type="text" id="inpClientName" class="custom-input" placeholder="Ex: Société Alpha Tech / M. Abdoul" value="Société Client Test" oninput="updateInvoice()">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Téléphone / WhatsApp</label>
+            <input type="text" id="inpClientPhone" class="custom-input" placeholder="+227 90 00 00 00" value="+227 90 12 34 56" oninput="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Email</label>
+            <input type="email" id="inpClientEmail" class="custom-input" placeholder="client@exemple.com" value="contact@alphatech.ne" oninput="updateInvoice()">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Adresse / Ville</label>
+            <input type="text" id="inpClientAddress" class="custom-input" value="Quartier Plateau, Niamey" oninput="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">NIF / RCCM Client (optionnel)</label>
+            <input type="text" id="inpClientNif" class="custom-input" placeholder="Optionnel" oninput="updateInvoice()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Line Items Section -->
+      <div class="space-y-3 pt-2 border-t border-[var(--ln)]">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">Prestations & Lignes</div>
+          <button type="button" onclick="addItem()" class="text-xs text-[var(--ac)] font-bold flex items-center gap-1 hover:underline">
+            + Ajouter une ligne
+          </button>
+        </div>
+        
+        <div id="itemsContainer" class="space-y-2.5">
+          <!-- Dynamically inserted item controls -->
+        </div>
+      </div>
+
+      <!-- Payment & Bank Details Configuration -->
+      <div class="space-y-3 pt-2 border-t border-[var(--ln)]">
+        <div class="text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">Moyens de paiement affichés</div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Numéro Mobile Money (Réception)</label>
+            <input type="text" id="inpPaymentPhone" class="custom-input" value="+227 87 72 75 01" oninput="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-xs text-[var(--mu)] mb-1">Titulaire du compte</label>
+            <input type="text" id="inpPaymentHolder" class="custom-input" value="SmartLimb / Ravel-C" oninput="updateInvoice()">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-[var(--mu)] mb-1">Moyen utilisé / référence (si payée)</label>
+          <input type="text" id="inpPaymentRef" class="custom-input" value="Airtel Money / Orange Money (Ref: OM-8392019)" oninput="updateInvoice()">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-4 border-t border-[var(--ln)] flex flex-col gap-2.5">
+        <button onclick="window.print()" class="w-full btn-primary py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          Générer la Facture (Imprimer / PDF)
+        </button>
+        <button onclick="saveToStorage()" class="w-full btn-secondary py-2.5 rounded-xl text-xs font-semibold text-[var(--mu)] hover:text-white">
+          💾 Enregistrer cette facture dans l'historique
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL: Live A4 Certified Invoice Preview -->
+    <div class="xl:col-span-7 flex flex-col items-center">
+      <div class="no-print mb-3 text-xs text-[var(--mu)] flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[var(--gr)] animate-pulse"></span>
+        Prévisualisation haute fidélité (Format A4 certifié pour impression ou PDF)
+      </div>
+
+      <!-- The Real Printable Sheet -->
+      <div id="invoiceSheet" class="invoice-sheet">
+        <div class="space-y-5">
+          <!-- Header: Logo & Issuer Info -->
+        <div class="flex justify-between items-start pb-6 border-b-2 border-gray-100">
+          <div>
+            <div class="flex items-center gap-3">
+              <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0 rounded-lg shadow-sm">
+                <rect width="42" height="42" rx="10" fill="#FF7A2B"/>
+                <text x="21" y="29" text-anchor="middle" fill="#0C1A12" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-weight="800" font-size="25">R</text>
+              </svg>
+              <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-gray-900 h-font">Ravel-C Cloud</h1>
+                <div class="text-xs font-medium text-gray-500 tracking-wide">Une marque opérée par SmartLimb</div>
+              </div>
+            </div>
+            
+            <div class="mt-4 text-xs text-gray-600 space-y-0.5">
+              <div id="viewIssuerName" class="font-semibold text-gray-800">SmartLimb SARL</div>
+              <div>Hébergement Cloud & Solutions Web</div>
+              <div id="viewIssuerAddress">Niamey, République du Niger</div>
+              <div id="viewIssuerLegal" class="text-gray-500 font-mono text-[11px]"></div>
+              <div id="viewIssuerContact">Email : contact@ravel-c.com · Tél / WhatsApp : +227 87 72 75 01</div>
+            </div>
+          </div>
+
+          <!-- Document Meta (Number & Status Stamp) -->
+          <div class="text-right flex flex-col items-end">
+            <div class="text-xs font-bold uppercase tracking-widest text-gray-400">FACTURE OFFICIELLE</div>
+            <div id="viewInvoiceNum" class="text-xl font-bold mono-font text-gray-900 mt-1">RC-2026-0001</div>
+
+            <div class="mt-3">
+              <div id="viewStamp" class="stamp-badge stamp-paid">
+                <span id="viewStampText">✓ FACTURE PAYÉE</span>
+              </div>
+            </div>
+
+            <div class="mt-4 text-xs text-gray-600 space-y-0.5">
+              <div><span class="text-gray-400">Émise le :</span> <strong id="viewDateEmission" class="text-gray-800">24/10/2026</strong></div>
+              <div><span class="text-gray-400">Échéance :</span> <strong id="viewDateEcheance" class="text-gray-800">24/10/2026</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bill To & Service Period -->
+        <div class="grid grid-cols-2 gap-8 my-6 py-4 bg-gray-50 rounded-xl px-5 border border-gray-100">
+          <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">FACTURÉ À</div>
+            <div id="viewClientName" class="font-bold text-gray-900 text-base">Société Client Test</div>
+            <div id="viewClientAddress" class="text-xs text-gray-600 mt-0.5">Quartier Plateau, Niamey</div>
+            <div id="viewClientContact" class="text-xs text-gray-600 mt-0.5">+227 90 12 34 56 · contact@alphatech.ne</div>
+            <div id="viewClientNif" class="text-xs text-gray-500 mt-0.5"></div>
+          </div>
+
+          <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">DÉTAIL DE LA PRESTATION</div>
+            <div class="text-xs text-gray-600"><strong>Service :</strong> Hébergement & Cloud Ravel-C</div>
+            <div class="text-xs text-gray-600 mt-1"><strong>Période :</strong> <span id="viewPeriod" class="font-medium text-gray-900">1er mois : 24 oct — 23 nov 2026</span></div>
+            <div class="text-xs text-gray-600 mt-1"><strong>Règlement :</strong> <span id="viewPaymentMethod" class="text-gray-900 font-medium">Orange Money / Airtel Money</span></div>
+          </div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="mt-6">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-gray-300 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                <th class="py-2.5 w-1/2">Désignation & Spécifications</th>
+                <th class="py-2.5 text-center">Qté</th>
+                <th class="py-2.5 text-right">Prix Unitaire (FCFA)</th>
+                <th class="py-2.5 text-right">Montant Net (FCFA)</th>
+              </tr>
+            </thead>
+            <tbody id="viewTableBody" class="divide-y divide-gray-100 text-xs">
+              <!-- Dynamically populated table rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals & Legal Notice -->
+        <div class="mt-6 pt-4 border-t-2 border-gray-100 grid grid-cols-12 gap-6">
+          <div class="col-span-7">
+            <div class="text-xs text-gray-500 mb-1">Arrêté la présente facture à la somme de :</div>
+            <div id="viewTotalWords" class="text-xs font-bold text-gray-800 uppercase italic bg-gray-50 p-2.5 rounded border border-gray-200">
+              QUINZE MILLE FRANCS CFA
+            </div>
+
+            <!-- Mobile Money & Payment Instructions -->
+            <div id="viewPayBoxContainer" class="mt-4 p-3 bg-emerald-50/70 border border-emerald-300 rounded-lg text-xs text-emerald-950">
+              <div class="font-bold flex items-center justify-between text-emerald-900 border-b border-emerald-200/60 pb-1.5 mb-2">
+                <span id="viewPayBoxTitle" class="flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                  <span>Paiement certifié & acquitté</span>
+                </span>
+                <span id="viewPayBoxBadge" class="text-[10px] uppercase font-bold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded">RÉGLÉ</span>
+              </div>
+              <div class="text-[11.5px] leading-relaxed text-emerald-900 space-y-1">
+                <div><strong>Moyen & Référence :</strong> <span id="viewPayRefBox" class="font-mono text-emerald-950 font-bold bg-white/70 px-1.5 py-0.5 rounded border border-emerald-200">Airtel Money / Orange Money (Ref: OM-8392019)</span></div>
+                <div>Numéro Mobile Money : <strong id="viewPayNumber" class="text-black">+227 87 72 75 01</strong></div>
+                <div>Bénéficiaire / Compte : <strong id="viewPayHolder">SmartLimb / Ravel-C</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-5 flex flex-col justify-between">
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between text-gray-600">
+                <span>Sous-total HT :</span>
+                <span id="viewSubtotal" class="font-semibold text-gray-900">15 000 FCFA</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>TVA (0% - Régime Simplifié) :</span>
+                <span class="font-semibold text-gray-900">0 FCFA</span>
+              </div>
+              <div class="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200 pt-2">
+                <span>TOTAL À PAYER :</span>
+                <span id="viewTotal" class="text-[#FF7A2B] font-extrabold">15 000 FCFA</span>
+              </div>
+            </div>
+
+            <!-- Signature & Seal of SmartLimb -->
+            <div class="mt-6 pt-4 border-t border-dashed border-gray-300 text-center flex flex-col items-center">
+              <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Pour SmartLimb / Ravel-C Cloud</div>
+              <div class="my-2 relative flex items-center justify-center">
+                <!-- Digital Certification Badge Icon -->
+                <div class="w-20 h-20 rounded-full border-2 border-emerald-600/40 flex flex-col items-center justify-center p-1 text-[8px] font-bold text-emerald-800 uppercase tracking-tighter text-center bg-emerald-50/30">
+                  <svg class="w-6 h-6 text-emerald-600 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                  <span>CERTIFIÉ</span>
+                  <span class="text-[7px] text-gray-500">SMARTLIMB</span>
+                </div>
+              </div>
+              <div class="text-[10px] text-gray-400">Signature & Cachet Électronique Valide</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer / Legal Compliance (In document flow, will never overlap) -->
+        <div id="viewFooterLegal" class="mt-6 pt-3 text-center text-[10.5px] text-gray-400 border-t border-gray-200 shrink-0">
+          Ravel-C Cloud est un service hébergé et propulsé par SmartLimb SARL · Niamey, Niger<br>
+          Facture générée numériquement et certifiée conforme pour valoir ce que de droit.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// State Management
+let items = [
+  {
+    description: "Abonnement Ravel-C Cloud — Formule Business (1 mois)",
+    details: "15 sites statiques, 3 applications dynamiques, 2 bases MongoDB (5 Go), 500 Go bande passante, surveillance & sauvegardes quotidiennes.",
+    quantity: 1,
+    unitPrice: 15000
+  }
+];
+
+const PRESETS = {
+  starter: {
+    name: "Abonnement Ravel-C Cloud — Formule Starter (1 mois)",
+    details: "5 sites statiques, 1 application dynamique, 1 base MongoDB (1 Go), 5 Go stockage, 100 Go bande passante, déploiement continu GitHub.",
+    price: 5000
+  },
+  business: {
+    name: "Abonnement Ravel-C Cloud — Formule Business (1 mois)",
+    details: "15 sites statiques, 3 applications dynamiques, 2 bases MongoDB (5 Go), 15 Go stockage, 500 Go bande passante, surveillance & sauvegardes.",
+    price: 15000
+  },
+  pro: {
+    name: "Abonnement Ravel-C Cloud — Formule Pro (1 mois)",
+    details: "30 sites statiques, 8 applications dynamiques, 5 bases MongoDB (15 Go), 30 Go stockage, 1 To bande passante, alertes & support prioritaire.",
+    price: 35000
+  }
+};
+
+// Initialize Date Pickers with Today's Date
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  document.getElementById('inpDateEmission').value = todayStr;
+  
+  // Echeance par défaut : aujourd'hui ou dans 7 jours
+  const echeance = new Date(today);
+  echeance.setDate(echeance.getDate() + 5);
+  document.getElementById('inpDateEcheance').value = echeance.toISOString().split('T')[0];
+
+  // Période d'abonnement du 1er mois (ex: du mois dernier à aujourd'hui)
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 30);
+  document.getElementById('inpPeriodStart').value = startDate.toISOString().split('T')[0];
+  document.getElementById('inpPeriodEnd').value = todayStr;
+
+  // Generate an invoice number with Year & random sequence if not loaded
+  const year = today.getFullYear();
+  const randSeq = Math.floor(1000 + Math.random() * 9000);
+  document.getElementById('inpInvoiceNum').value = `RC-${year}-${randSeq}`;
+
+  // Restore issuer info if saved previously
+  const savedIssuer = localStorage.getItem('ravelc_issuer_info');
+  if (savedIssuer) {
+    try {
+      const parsed = JSON.parse(savedIssuer);
+      if (parsed.name) document.getElementById('inpIssuerName').value = parsed.name;
+      if (parsed.nif) document.getElementById('inpIssuerNif').value = parsed.nif;
+      if (parsed.rccm) document.getElementById('inpIssuerRccm').value = parsed.rccm;
+      if (parsed.address) document.getElementById('inpIssuerAddress').value = parsed.address;
+    } catch(e){}
+  }
+
+  renderInputItems();
+  updateInvoice();
+});
+
+// Render dynamic item inputs in the control panel
+function renderInputItems() {
+  const container = document.getElementById('itemsContainer');
+  container.innerHTML = '';
+
+  items.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = "p-3 bg-[var(--sf-card)] border border-[var(--ln)] rounded-xl space-y-2 text-xs relative";
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-gray-300">Article #${index + 1}</span>
+        ${items.length > 1 ? `<button onclick="removeItem(${index})" class="text-red-400 hover:text-red-300 font-bold text-xs">Supprimer</button>` : ''}
+      </div>
+      <div>
+        <label class="block text-[11px] text-[var(--mu)] mb-0.5">Titre</label>
+        <input type="text" class="custom-input" value="${escapeHtml(item.description)}" oninput="updateItem(${index}, 'description', this.value)">
+      </div>
+      <div>
+        <label class="block text-[11px] text-[var(--mu)] mb-0.5">Détails / spécifications</label>
+        <textarea class="custom-input text-xs" rows="2" oninput="updateItem(${index}, 'details', this.value)">${escapeHtml(item.details)}</textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[11px] text-[var(--mu)] mb-0.5">Quantité</label>
+          <input type="number" min="1" class="custom-input" value="${item.quantity}" oninput="updateItem(${index}, 'quantity', parseInt(this.value) || 1)">
+        </div>
+        <div>
+          <label class="block text-[11px] text-[var(--mu)] mb-0.5">Prix unitaire (FCFA)</label>
+          <input type="number" step="500" class="custom-input" value="${item.unitPrice}" oninput="updateItem(${index}, 'unitPrice', parseInt(this.value) || 0)">
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateItem(index, key, value) {
+  items[index][key] = value;
+  updateInvoice();
+}
+
+function addItem() {
+  items.push({
+    description: "Option / Configuration supplémentaire",
+    details: "Support dédié, nom de domaine ou extension de stockage.",
+    quantity: 1,
+    unitPrice: 5000
+  });
+  renderInputItems();
+  updateInvoice();
+}
+
+function removeItem(index) {
+  if (items.length > 1) {
+    items.splice(index, 1);
+    renderInputItems();
+    updateInvoice();
+  }
+}
+
+function applyPreset(key) {
+  const preset = PRESETS[key];
+  if (!preset) return;
+  items[0] = {
+    description: preset.name,
+    details: preset.details,
+    quantity: 1,
+    unitPrice: preset.price
+  };
+  renderInputItems();
+  updateInvoice();
+}
+
+// Convert numbers to French words (pour montants en FCFA)
+function numberToFrenchWords(n) {
+  if (n === 0) return "zéro franc CFA";
+  
+  const units = ["", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf"];
+  const teens = ["dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"];
+  const tens = ["", "dix", "vingt", "trente", "quarante", "cinquante", "soixante", "soixante-dix", "quatre-vingts", "quatre-vingt-dix"];
+
+  function convertChunk(num) {
+    let str = "";
+    if (num >= 100) {
+      const h = Math.floor(num / 100);
+      if (h === 1) str += "cent ";
+      else str += units[h] + " cent ";
+      num %= 100;
+    }
+    if (num >= 20) {
+      const t = Math.floor(num / 10);
+      const u = num % 10;
+      if (t === 7) {
+        str += "soixante-" + (u === 1 ? "et-onze" : teens[u]);
+      } else if (t === 9) {
+        str += "quatre-vingt-" + teens[u];
+      } else {
+        str += tens[t] + (u === 1 ? " et un" : (u > 1 ? "-" + units[u] : ""));
+      }
+    } else if (num >= 10) {
+      str += teens[num - 10];
+    } else if (num > 0) {
+      str += units[num];
+    }
+    return str.trim();
+  }
+
+  let words = "";
+  if (n >= 1000000) {
+    const millions = Math.floor(n / 1000000);
+    words += (millions === 1 ? "un million " : convertChunk(millions) + " millions ");
+    n %= 1000000;
+  }
+  if (n >= 1000) {
+    const thousands = Math.floor(n / 1000);
+    words += (thousands === 1 ? "mille " : convertChunk(thousands) + " mille ");
+    n %= 1000;
+  }
+  if (n > 0) {
+    words += convertChunk(n);
+  }
+
+  return (words.trim() + " francs CFA").toUpperCase();
+}
+
+function formatFCFA(val) {
+  return new Intl.NumberFormat('fr-FR').format(val) + " FCFA";
+}
+
+function formatDate(isoStr) {
+  if (!isoStr) return "";
+  const parts = isoStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return isoStr;
+}
+
+// Helper to get formatted period text
+function getFormattedPeriod() {
+  const start = formatDate(document.getElementById('inpPeriodStart')?.value);
+  const end = formatDate(document.getElementById('inpPeriodEnd')?.value);
+  const cycle = document.getElementById('inpCycleLabel')?.value || '1er mois';
+  if (start && end) {
+    return `${cycle} (Du ${start} au ${end})`;
+  }
+  return cycle;
+}
+
+// Update the printable preview sheet
+function updateInvoice() {
+  const invoiceNum = document.getElementById('inpInvoiceNum').value || 'RC-XXXX';
+  const status = document.getElementById('inpStatus').value;
+  const dateEmission = formatDate(document.getElementById('inpDateEmission').value);
+  const dateEcheance = formatDate(document.getElementById('inpDateEcheance').value);
+  const period = getFormattedPeriod();
+
+  const clientName = document.getElementById('inpClientName').value || 'Nom du Client';
+  const clientPhone = document.getElementById('inpClientPhone').value || '';
+  const clientEmail = document.getElementById('inpClientEmail').value || '';
+  const clientAddress = document.getElementById('inpClientAddress').value || '';
+  const clientNif = document.getElementById('inpClientNif').value;
+
+  const payPhone = document.getElementById('inpPaymentPhone').value;
+  const payHolder = document.getElementById('inpPaymentHolder').value;
+  const payRef = document.getElementById('inpPaymentRef').value;
+
+  // Issuer details
+  const issuerName = document.getElementById('inpIssuerName')?.value || 'SmartLimb SARL';
+  const issuerNif = document.getElementById('inpIssuerNif')?.value?.trim();
+  const issuerRccm = document.getElementById('inpIssuerRccm')?.value?.trim();
+  const issuerAddress = document.getElementById('inpIssuerAddress')?.value || 'Niamey, République du Niger';
+
+  document.getElementById('viewIssuerName').innerText = issuerName;
+  document.getElementById('viewIssuerAddress').innerText = issuerAddress;
+
+  const legalParts = [];
+  if (issuerNif) legalParts.push(`NIF : ${issuerNif}`);
+  if (issuerRccm) legalParts.push(`RCCM : ${issuerRccm}`);
+  document.getElementById('viewIssuerLegal').innerText = legalParts.join(' · ');
+
+  let footerText = `Ravel-C Cloud est un service hébergé et propulsé par ${issuerName} · ${issuerAddress}`;
+  if (issuerNif) footerText += ` · NIF : ${issuerNif}`;
+  footerText += `<br>Facture générée numériquement et certifiée conforme pour valoir ce que de droit.`;
+  document.getElementById('viewFooterLegal').innerHTML = footerText;
+
+  // Update DOM elements
+  document.getElementById('viewInvoiceNum').innerText = invoiceNum;
+  document.getElementById('viewDateEmission').innerText = dateEmission;
+  document.getElementById('viewDateEcheance').innerText = dateEcheance;
+  document.getElementById('viewPeriod').innerText = period;
+
+  document.getElementById('viewClientName').innerText = clientName;
+  document.getElementById('viewClientAddress').innerText = clientAddress;
+  document.getElementById('viewClientContact').innerText = [clientPhone, clientEmail].filter(Boolean).join(' · ');
+  document.getElementById('viewClientNif').innerText = clientNif ? `NIF/RCCM Client : ${clientNif}` : '';
+
+  document.getElementById('viewPayNumber').innerText = payPhone;
+  document.getElementById('viewPayHolder').innerText = payHolder;
+  document.getElementById('viewPaymentMethod').innerText = payRef || 'Mobile Money / Virement';
+  if (document.getElementById('viewPayRefBox')) {
+    document.getElementById('viewPayRefBox').innerText = payRef || 'À préciser lors du règlement';
+  }
+
+  // Update Status Stamp & Payment Box
+  const stampEl = document.getElementById('viewStamp');
+  const stampText = document.getElementById('viewStampText');
+  const payBox = document.getElementById('viewPayBoxContainer');
+  const payBadge = document.getElementById('viewPayBoxBadge');
+  const payTitle = document.getElementById('viewPayBoxTitle');
+
+  if (status === 'PAID') {
+    stampEl.className = 'stamp-badge stamp-paid';
+    stampText.innerText = '✓ FACTURE PAYÉE & CERTIFIÉE';
+    if (payBox) payBox.className = 'mt-4 p-3 bg-emerald-50/70 border border-emerald-300 rounded-lg text-xs text-emerald-950';
+    if (payBadge) {
+      payBadge.className = 'text-[10px] uppercase font-bold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded';
+      payBadge.innerText = 'RÉGLÉ';
+    }
+    if (payTitle) payTitle.innerHTML = `<svg class="w-4 h-4 text-emerald-600 inline mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Paiement certifié & acquitté`;
+  } else if (status === 'PENDING') {
+    stampEl.className = 'stamp-badge stamp-pending';
+    stampText.innerText = '⏳ EN ATTENTE DE PAIEMENT';
+    if (payBox) payBox.className = 'mt-4 p-3 bg-amber-50/70 border border-amber-300 rounded-lg text-xs text-amber-950';
+    if (payBadge) {
+      payBadge.className = 'text-[10px] uppercase font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded';
+      payBadge.innerText = 'À RÉGLER';
+    }
+    if (payTitle) payTitle.innerHTML = `⏳ Instructions pour le règlement Mobile Money`;
+  } else {
+    stampEl.className = 'stamp-badge stamp-pending';
+    stampText.innerText = 'DOCUMENT PROFORMA / DEVIS';
+    if (payBox) payBox.className = 'mt-4 p-3 bg-gray-50 border border-gray-300 rounded-lg text-xs text-gray-900';
+    if (payBadge) {
+      payBadge.className = 'text-[10px] uppercase font-bold bg-gray-200 text-gray-800 px-2 py-0.5 rounded';
+      payBadge.innerText = 'DEVIS';
+    }
+    if (payTitle) payTitle.innerHTML = `Coordonnées de règlement`;
+  }
+
+  // Update Table & Totals
+  const tbody = document.getElementById('viewTableBody');
+  tbody.innerHTML = '';
+  let grandTotal = 0;
+
+  items.forEach(item => {
+    const lineTotal = (item.quantity || 1) * (item.unitPrice || 0);
+    grandTotal += lineTotal;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="py-3 pr-4">
+        <div class="font-bold text-gray-900">${escapeHtml(item.description)}</div>
+        ${item.details ? `<div class="text-[11px] text-gray-500 mt-0.5 leading-normal">${escapeHtml(item.details)}</div>` : ''}
+      </td>
+      <td class="py-3 text-center font-medium text-gray-700">${item.quantity}</td>
+      <td class="py-3 text-right font-medium text-gray-700">${formatFCFA(item.unitPrice)}</td>
+      <td class="py-3 text-right font-bold text-gray-900">${formatFCFA(lineTotal)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('viewSubtotal').innerText = formatFCFA(grandTotal);
+  document.getElementById('viewTotal').innerText = formatFCFA(grandTotal);
+  document.getElementById('viewTotalWords').innerText = numberToFrenchWords(grandTotal);
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function shareWhatsApp() {
+  const clientName = document.getElementById('inpClientName').value;
+  const num = document.getElementById('inpInvoiceNum').value;
+  const total = document.getElementById('viewTotal').innerText;
+  const period = getFormattedPeriod();
+  const payPhone = document.getElementById('inpPaymentPhone').value;
+
+  const msg = `Bonjour ${clientName},\n\nVoici votre facture certifiée Ravel-C Cloud n° *${num}* d'un montant de *${total}* pour votre abonnement (${period}).\n\nRèglement par Mobile Money (Orange Money / Airtel Money) au : *${payPhone}* (Bénéficiaire : SmartLimb / Ravel-C).\n\nMerci de votre confiance !\nL'équipe Ravel-C Cloud / SmartLimb.`;
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function saveToStorage() {
+  const invoiceData = {
+    invoiceNum: document.getElementById('inpInvoiceNum').value,
+    status: document.getElementById('inpStatus').value,
+    dateEmission: document.getElementById('inpDateEmission').value,
+    dateEcheance: document.getElementById('inpDateEcheance').value,
+    periodStart: document.getElementById('inpPeriodStart').value,
+    periodEnd: document.getElementById('inpPeriodEnd').value,
+    cycleLabel: document.getElementById('inpCycleLabel').value,
+    period: getFormattedPeriod(),
+    client: {
+      name: document.getElementById('inpClientName').value,
+      phone: document.getElementById('inpClientPhone').value,
+      email: document.getElementById('inpClientEmail').value,
+      address: document.getElementById('inpClientAddress').value,
+      nif: document.getElementById('inpClientNif').value
+    },
+    items: items,
+    payment: {
+      phone: document.getElementById('inpPaymentPhone').value,
+      holder: document.getElementById('inpPaymentHolder').value,
+      ref: document.getElementById('inpPaymentRef').value
+    }
+  };
+
+  const issuerData = {
+    name: document.getElementById('inpIssuerName')?.value,
+    nif: document.getElementById('inpIssuerNif')?.value,
+    rccm: document.getElementById('inpIssuerRccm')?.value,
+    address: document.getElementById('inpIssuerAddress')?.value
+  };
+  localStorage.setItem('ravelc_issuer_info', JSON.stringify(issuerData));
+  localStorage.setItem('ravelc_last_invoice', JSON.stringify(invoiceData));
+  alert('Facture et coordonnées de SmartLimb sauvegardées avec succès dans votre navigateur !');
+}
+
+function resetDefaults() {
+  if (confirm("Voulez-vous réinitialiser le formulaire ?")) {
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
