@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Politique de facturation et de paiement — Ravel-C Cloud</title>
+<meta name="description" content="Conditions de facturation, délais de paiement, renouvellements et suspension des services Ravel-C Cloud.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root{--bg:#07120C;--sf:#0F2217;--ln:#1F3A2A;--fg:#EAF2EC;--mu:#9DB3A5;--ac:#FF7A2B;--gr:#2FBF6B;--wa:#FFC24B}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F6F8F5;--sf:#fff;--ln:#D8DFD9;--fg:#0C1A12;--mu:#4A5A50;--ac:#C44E0B;--gr:#1E8A3E;--wa:#9A6700}}
+:root[data-theme="light"]{--bg:#F6F8F5;--sf:#fff;--ln:#D8DFD9;--fg:#0C1A12;--mu:#4A5A50;--ac:#C44E0B;--gr:#1E8A3E;--wa:#9A6700}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'DM Sans',system-ui,sans-serif;line-height:1.65;overflow-x:hidden}
+.h{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.025em;font-weight:800;line-height:1.08}
+.mu{color:var(--mu)}.ac{color:var(--ac)}
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--ln)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:12px;font-weight:700;text-decoration:none;transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.b1{background:#FF7A2B;color:#0C1A12}
+.b2{border:1px solid var(--ln);color:var(--fg)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:24px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--ac);text-transform:uppercase}
+.art{border-top:1px solid var(--ln);padding-top:36px;margin-top:36px}
+.art h2{display:flex;gap:14px;align-items:baseline}
+.art h2 .n{color:var(--ac);font-size:.8em}
+.art p{margin:14px 0 0;max-width:68ch}
+.art h3{font-weight:700;font-size:17px;margin:22px 0 0}
+.key{font-weight:700;color:var(--fg);background:color-mix(in srgb,var(--ac) 14%,transparent);padding:1px 6px;border-radius:6px}
+.toc a{display:block;padding:7px 12px;border-radius:9px;text-decoration:none;color:var(--mu);font-size:15px}
+.toc a:hover{background:var(--sf);color:var(--fg)}
+.todo{border:1px dashed var(--wa);border-radius:14px;padding:16px 18px;margin-top:16px;color:var(--wa);font-size:15px}
+.step{display:flex;gap:14px}
+.step .dot{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac)}
+a{color:inherit}
+.list{margin:10px 0 0;padding-left:22px;max-width:68ch;list-style:disc}
+.list li::marker{color:var(--ac)}
+.list li{margin-top:4px}
+.print-only{display:none}
+@page{size:A4;margin:16mm 16mm 18mm}
+@media print{
+:root,:root:not([data-theme]){--bg:#fff;--sf:#fff;--ln:#D8DFD9;--fg:#0C1A12;--mu:#4A5A50;--ac:#C44E0B;--gr:#1E8A3E;--wa:#9A6700}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.nav,.toc-wrap,.no-print,footer{display:none!important}
+.print-only{display:block}
+body{background:#fff;color:#0C1A12;font-size:11.5pt;line-height:1.55}
+main{padding:0!important;max-width:none!important}
+main>div.grid{display:block!important;margin-top:0!important}
+h1{font-size:28pt!important}
+.card{border-color:#D8DFD9;break-inside:avoid;padding:16px}
+.art{padding-top:18px;margin-top:18px}
+.art h2{font-size:17pt!important;break-after:avoid}
+.art h3{font-size:12pt;margin-top:12px;break-after:avoid}
+.art p,.list{max-width:none}
+.art p,.list li{orphans:3;widows:3}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 h-[68px] flex items-center justify-between gap-3">
+<a href="index.html" class="h text-[21px] no-underline flex items-center gap-2.5"><span class="inline-flex w-8 h-8 rounded-lg items-center justify-center text-[#0C1A12]" style="background:#FF7A2B">R</span>Ravel-C</a>
+<div class="flex items-center gap-2">
+<a href="index.html" class="hidden sm:inline-flex btn b2 !min-h-[40px] !px-4 text-sm">Retour au site</a>
+<a href="https://wa.me/22787727501" class="btn b1 !min-h-[40px] !px-4 text-sm">Une question ?</a>
+</div>
+</div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-20">
+
+<div class="max-w-3xl">
+<div class="eyebrow">Politiques Ravel-C Cloud</div>
+<h1 class="h text-[36px] sm:text-[52px] mt-3">Politique de facturation et de paiement</h1>
+<p class="mu mt-4 text-lg">Comment et quand vous êtes facturé, combien de temps vous avez pour payer, et ce qui se passe en cas de retard.</p>
+<p class="mu text-sm mt-3">Dernière mise à jour : 8 novembre 2026</p>
+<a href="politique-facturation-ravel-c.pdf" download class="btn b2 mt-5 no-print">
+<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14"/></svg>Télécharger en PDF</a>
+</div>
+<div class="print-only mt-4 text-sm mu">Ravel-C Cloud · Une initiative SmartLimb · Niamey, Niger · contact@ravel-c.com · WhatsApp +227 87 72 75 01</div>
+
+<!-- Résumé -->
+<section class="card mt-10" aria-labelledby="resume">
+<h2 id="resume" class="h text-2xl">En bref</h2>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
+<div class="step"><span class="dot">1</span><div><strong>Premier mois payé d'avance</strong><p class="mu text-[15px] mt-1">Vos services sont activés une fois le paiement confirmé.</p></div></div>
+<div class="step"><span class="dot">2</span><div><strong>Ensuite, facturé à terme échu</strong><p class="mu text-[15px] mt-1">À partir du 2<sup>e</sup> cycle, vous payez en fin de mois ce que vous avez utilisé.</p></div></div>
+<div class="step"><span class="dot">3</span><div><strong>3 jours pour régler</strong><p class="mu text-[15px] mt-1">À compter de la date d'émission de chaque facture.</p></div></div>
+<div class="step"><span class="dot">4</span><div><strong>Pas de coupure surprise</strong><p class="mu text-[15px] mt-1">Toute suspension est précédée d'une notification.</p></div></div>
+</div>
+</section>
+
+<div class="grid lg:grid-cols-[220px_1fr] gap-10 mt-6">
+
+<aside class="toc-wrap hidden lg:block">
+<nav class="toc sticky top-[100px] mt-9" aria-label="Sommaire">
+<div class="text-xs font-bold uppercase tracking-wider mu px-3 mb-2">Sommaire</div>
+<a href="#premiere-souscription">1. Première souscription</a>
+<a href="#renouvellements">2. Renouvellements</a>
+<a href="#retard">3. Retard et suspension</a>
+<a href="#conservation">4. Conservation des données</a>
+<a href="#moyens">5. Moyens de paiement</a>
+<a href="#contact">6. Contact</a>
+</nav>
+</aside>
+
+<div>
+
+<article id="premiere-souscription" class="art">
+<h2 class="h text-2xl sm:text-3xl"><span class="n">01</span>Première souscription</h2>
+<p>Toute première souscription à un service Ravel-C Cloud est soumise à un <strong>paiement anticipé</strong>.</p>
+<p>À compter de l'émission de la première facture, le client dispose d'un délai maximal de <span class="key">trois (3) jours calendaires</span> pour procéder au règlement.</p>
+<p>L'activation des services intervient après confirmation du paiement.</p>
+</article>
+
+<article id="renouvellements" class="art">
+<h2 class="h text-2xl sm:text-3xl"><span class="n">02</span>Renouvellements et facturation périodique</h2>
+<p>À partir du deuxième cycle de facturation, les services sont facturés <strong>mensuellement à terme échu</strong>.</p>
+<p>Une facture correspondant aux ressources et services utilisés durant la période écoulée est transmise au client à la fin de chaque cycle, et non à l'avance.</p>
+<p>Le client dispose d'un délai de <span class="key">trois (3) jours calendaires</span> à compter de la date d'émission de chaque facture pour procéder au règlement.</p>
+</article>
+
+<article id="retard" class="art">
+<h2 class="h text-2xl sm:text-3xl"><span class="n">03</span>Retard de paiement et suspension</h2>
+<p>En cas de retard de paiement, Ravel-C Cloud se réserve le droit, <strong>après notification préalable du client</strong>, de suspendre temporairement les services concernés.</p>
+<p>La suspension des services n'entraîne pas automatiquement la suppression des données du client. Leur conservation et leur éventuelle restauration sont soumises à la <a href="#conservation" class="ac font-semibold">politique de conservation des données</a> de Ravel-C Cloud.</p>
+</article>
+
+<article id="conservation" class="art">
+<h2 class="h text-2xl sm:text-3xl"><span class="n">04</span>Conservation des données</h2>
+<p>Cette section précise ce que deviennent les données d'un service suspendu ou arrêté, combien de temps elles sont conservées, et comment les récupérer.</p>
+
+<h3>4.1 Pendant la suspension</h3>
+<p>Les applications, sites, bases de données et fichiers du client sont conservés <strong>intacts</strong>, mais ne sont plus accessibles en ligne. Aucune donnée n'est modifiée ni supprimée pendant cette période.</p>
+
+<h3>4.2 Durée de conservation</h3>
+<p>Les données d'un service suspendu sont conservées pendant <span class="key">trente (30) jours calendaires</span> à compter de la date de suspension.</p>
+
+<h3>4.3 Rappels avant suppression</h3>
+<p>Le client est prévenu par WhatsApp ou par email, aux coordonnées qu'il a communiquées :</p>
+<ul class="list">
+<li>au moment de la suspension ;</li>
+<li>quinze (15) jours après la suspension ;</li>
+<li>au plus tard cinq (5) jours avant la suppression définitive.</li>
+</ul>
+
+<h3>4.4 Suppression définitive</h3>
+<p>Sans régularisation à l'issue des trente (30) jours, les données du service sont <strong>supprimées définitivement</strong>, sauvegardes comprises. Cette suppression est irréversible.</p>
+
+<h3>4.5 Restauration après régularisation</h3>
+<p>Dès réception du paiement intégral des sommes dues pendant la période de conservation, les services sont réactivés dans un délai de <strong>vingt-quatre (24) heures ouvrées</strong>, avec les données dans l'état où elles se trouvaient au moment de la suspension.</p>
+
+<h3>4.6 Récupération des données</h3>
+<p>Pendant la période de conservation, le client peut demander une copie de ses données (fichiers et export des bases MongoDB). La copie est transmise après vérification de l'identité du demandeur.</p>
+
+<h3>4.7 Sauvegardes</h3>
+<p>Les sauvegardes quotidiennes des formules Business (rétention de 7 jours) et Pro (rétention de 14 jours) protègent contre les erreurs et incidents. Elles ne prolongent pas la durée de conservation prévue en cas de suspension. La formule Starter n'inclut pas de sauvegarde automatique : le client reste responsable de conserver sa propre copie de ses données.</p>
+
+<h3>4.8 Fin de service à l'initiative du client</h3>
+<p>Lorsque le client met fin à un service, ses données sont conservées trente (30) jours afin de lui permettre de les récupérer, puis supprimées définitivement.</p>
+</article>
+
+<article id="moyens" class="art">
+<h2 class="h text-2xl sm:text-3xl"><span class="n">05</span>Moyens de paiement</h2>
+<p>Les factures sont émises et réglées en <strong>francs CFA (FCFA)</strong>. Moyens acceptés : Orange Money, MTN Mobile Money, Airtel Money, myNita, Amanata, Visa et Mastercard.</p>
+<p>Le numéro de réception et la référence à indiquer figurent sur chaque facture.</p>
+</article>
+
+<article id="contact" class="art">
+<h2 class="h text-2xl sm:text-3xl"><span class="n">06</span>Une question sur une facture ?</h2>
+<p>Notre équipe vous répond en français.</p>
+<div class="flex flex-wrap gap-3 mt-5 no-print">
+<a href="https://wa.me/22787727501" class="btn b1">Écrire sur WhatsApp</a>
+<a href="mailto:contact@ravel-c.com" class="btn b2">contact@ravel-c.com</a>
+</div>
+<p class="mu text-sm">WhatsApp +227 87 72 75 01 · contact@ravel-c.com · Niamey, Niger</p>
+</article>
+
+</div>
+</div>
+</main>
+
+<footer class="border-t border-[var(--ln)] py-8 text-sm mu">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row gap-4 justify-between">
+<div>© Ravel-C · Ravel Cloud · Une initiative SmartLimb</div>
+<div class="flex flex-wrap gap-5"><a href="index.html">Accueil</a><a href="index.html#tarifs">Tarifs</a><a href="index.html#faq">FAQ</a></div>
+</div>
+</footer>
+
+</body>
+</html>
