@@ -226,11 +226,21 @@ body {
           <label class="block text-[11px] text-[var(--mu)] mb-0.5">Adresse & Ville</label>
           <input type="text" id="inpIssuerAddress" class="custom-input text-xs" value="Niamey, République du Niger" oninput="updateInvoice()">
         </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-[var(--mu)] mb-0.5">Email de contact</label>
+            <input type="email" id="inpIssuerEmail" class="custom-input text-xs" value="contact@ravel-c.com" placeholder="contact@ravel-c.com" oninput="updateInvoice()">
+          </div>
+          <div>
+            <label class="block text-[11px] text-[var(--mu)] mb-0.5">Tél / WhatsApp</label>
+            <input type="text" id="inpIssuerPhone" class="custom-input text-xs" value="+227 87 72 75 01" placeholder="+227 87 72 75 01" oninput="updateInvoice()">
+          </div>
+        </div>
       </div>
 
-      <!-- Quick Preset Buttons -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--mu)] mb-2">Formules Ravel-C rapides</label>
+      <!-- Quick Preset Buttons & Real Client Scenarios -->
+      <div class="space-y-2.5">
+        <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">Formules Ravel-C rapides</label>
         <div class="grid grid-cols-3 gap-2">
           <button type="button" onclick="applyPreset('starter')" class="px-2.5 py-2 rounded-lg bg-[var(--sf-card)] border border-[var(--ln)] hover:border-[var(--ac)] text-xs text-left transition">
             <div class="font-bold text-white">Starter</div>
@@ -245,6 +255,31 @@ body {
             <div class="font-bold text-white">Pro</div>
             <div class="text-[var(--ac)] font-semibold">35 000 F</div>
           </button>
+        </div>
+
+        <!-- 1-Click Real Client Presets -->
+        <div class="p-2.5 bg-[var(--sf-card)] border border-[var(--ac)]/40 rounded-xl space-y-1.5">
+          <div class="text-[11px] font-bold text-[var(--ac)] uppercase tracking-wider flex items-center justify-between">
+            <span>⚡ Cas clients types en 1 clic :</span>
+            <span class="text-[9.5px] text-[var(--mu)] lowercase">pack + instances</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="applyClientPreset('starter_client')" class="p-2 rounded-lg bg-[var(--sf)] border border-[var(--ln)] hover:border-[var(--ac)] text-left transition group">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-white group-hover:text-[var(--ac)]">🎯 Cliente Starter</span>
+                <span class="text-[10px] text-[var(--ac)] font-bold">5 000 F</span>
+              </div>
+              <div class="text-[10.5px] text-[var(--mu)] mt-0.5 leading-tight">1 API + 1 Mongo + 2 React (Vitrine & Admin)</div>
+            </button>
+
+            <button type="button" onclick="applyClientPreset('business_client')" class="p-2 rounded-lg bg-[var(--sf)] border border-[var(--ln)] hover:border-[var(--ac)] text-left transition group">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-white group-hover:text-[var(--ac)]">🚀 Client Business</span>
+                <span class="text-[10px] text-[var(--ac)] font-bold">15 000 F</span>
+              </div>
+              <div class="text-[10.5px] text-[var(--mu)] mt-0.5 leading-tight">API REST + Next.js + DB Mongo Dédiée</div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -342,6 +377,42 @@ body {
         </div>
       </div>
 
+      <!-- Instances & Services Manifest Section -->
+      <div class="space-y-3 pt-2 border-t border-[var(--ln)]">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-wider text-[var(--ac)] flex items-center gap-1.5">
+              <span>🚀 Instances & Services Hébergés</span>
+              <span id="badgeInstancesCount" class="text-[10px] bg-[var(--ac)]/20 text-[var(--ac)] px-1.5 py-0.2 rounded-full font-bold">4</span>
+            </div>
+            <p class="text-[11px] text-[var(--mu)]">Inventaire technique des applications, APIs et DBs couvertes.</p>
+          </div>
+          <button type="button" onclick="addGenericInstance()" class="text-xs text-[var(--ac)] font-bold flex items-center gap-1 hover:underline">
+            + Ajouter instance
+          </button>
+        </div>
+
+        <!-- Quick Add Pills for specific instance types -->
+        <div class="flex flex-wrap gap-1.5 text-[11px]">
+          <button type="button" onclick="quickAddInstance('api')" class="px-2 py-1 rounded bg-[var(--sf-card)] border border-[var(--ln)] hover:border-blue-400 text-blue-300 transition">+ API</button>
+          <button type="button" onclick="quickAddInstance('db')" class="px-2 py-1 rounded bg-[var(--sf-card)] border border-[var(--ln)] hover:border-emerald-400 text-emerald-300 transition">+ MongoDB</button>
+          <button type="button" onclick="quickAddInstance('static')" class="px-2 py-1 rounded bg-[var(--sf-card)] border border-[var(--ln)] hover:border-amber-400 text-amber-300 transition">+ Site React</button>
+          <button type="button" onclick="quickAddInstance('admin')" class="px-2 py-1 rounded bg-[var(--sf-card)] border border-[var(--ln)] hover:border-cyan-400 text-cyan-300 transition">+ Admin React</button>
+          <button type="button" onclick="quickAddInstance('dynamic')" class="px-2 py-1 rounded bg-[var(--sf-card)] border border-[var(--ln)] hover:border-purple-400 text-purple-300 transition">+ Next.js</button>
+        </div>
+
+        <div id="instancesContainer" class="space-y-2">
+          <!-- Dynamically inserted instance items -->
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] text-[var(--mu)] pt-1">
+          <button type="button" onclick="clearAllInstances()" class="text-red-400 hover:underline">
+            Vider la liste des instances
+          </button>
+          <span class="text-[10px] italic">Inclus automatiquement sur la facture A4</span>
+        </div>
+      </div>
+
       <!-- Payment & Bank Details Configuration -->
       <div class="space-y-3 pt-2 border-t border-[var(--ln)]">
         <div class="text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">Moyens de paiement affichés</div>
@@ -426,7 +497,7 @@ body {
         </div>
 
         <!-- Bill To & Service Period -->
-        <div class="grid grid-cols-2 gap-8 my-6 py-4 bg-gray-50 rounded-xl px-5 border border-gray-100">
+        <div class="grid grid-cols-2 gap-8 my-3.5 py-3.5 bg-gray-50 rounded-xl px-5 border border-gray-100">
           <div>
             <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">FACTURÉ À</div>
             <div id="viewClientName" class="font-bold text-gray-900 text-base">Société Client Test</div>
@@ -443,8 +514,24 @@ body {
           </div>
         </div>
 
+        <!-- Services & Instances Manifest Block -->
+        <div id="viewInstancesSection" class="my-3 p-3 bg-gray-50/90 rounded-xl border border-gray-200">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-200">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+              <span>Périmètre technique couvert & instances actives sur Ravel-C</span>
+            </div>
+            <span id="viewInstancesBadge" class="text-[10px] font-bold text-gray-600 bg-white px-2 py-0.5 rounded border border-gray-200">
+              4 instances
+            </span>
+          </div>
+          <div id="viewInstancesList" class="grid grid-cols-2 gap-2 text-xs">
+            <!-- Dynamically populated instance cards -->
+          </div>
+        </div>
+
         <!-- Line Items Table -->
-        <div class="mt-6">
+        <div class="mt-4">
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-gray-300 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
@@ -533,10 +620,90 @@ body {
 // State Management
 let items = [
   {
-    description: "Abonnement Ravel-C Cloud — Formule Business (1 mois)",
-    details: "15 sites statiques, 3 applications dynamiques, 2 bases MongoDB (5 Go), 500 Go bande passante, surveillance & sauvegardes quotidiennes.",
+    description: "Abonnement Ravel-C Cloud — Formule Starter (1 mois)",
+    details: "5 sites statiques, 1 application dynamique, 1 base MongoDB (1 Go), 5 Go stockage, 100 Go bande passante, déploiement continu GitHub.",
     quantity: 1,
-    unitPrice: 15000
+    unitPrice: 5000
+  }
+];
+
+// Configuration map for instance types with custom badges and default tech
+const INSTANCE_CONFIG = {
+  api: {
+    label: "API / Backend",
+    badgeText: "API REST",
+    badgeClass: "bg-blue-100 text-blue-800 border-blue-200",
+    defaultName: "API Backend Principal",
+    defaultTech: "Node.js / Express (Dyn. App 1/1)",
+    defaultUrl: "api.client.com"
+  },
+  db: {
+    label: "Base MongoDB",
+    badgeText: "MongoDB",
+    badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    defaultName: "Base de données Production",
+    defaultTech: "MongoDB Managée (1 Go inclus)",
+    defaultUrl: "cluster-01.ravel-c.net"
+  },
+  static: {
+    label: "Site Statique (Client / Vitrine)",
+    badgeText: "Statique",
+    badgeClass: "bg-amber-100 text-amber-800 border-amber-200",
+    defaultName: "Site Client Showcase / Vitrine",
+    defaultTech: "React.js (Site statique 1/5)",
+    defaultUrl: "www.client.com"
+  },
+  admin: {
+    label: "Portail / Dashboard Admin",
+    badgeText: "Admin",
+    badgeClass: "bg-cyan-100 text-cyan-800 border-cyan-200",
+    defaultName: "Espace Administration / Dashboard",
+    defaultTech: "React.js (Site statique 2/5)",
+    defaultUrl: "admin.client.com"
+  },
+  dynamic: {
+    label: "App Web Dynamique / SSR",
+    badgeText: "SSR / App",
+    badgeClass: "bg-purple-100 text-purple-800 border-purple-200",
+    defaultName: "Application Web Dynamique",
+    defaultTech: "Next.js SSR / Hybride",
+    defaultUrl: "app.client.com"
+  },
+  custom: {
+    label: "Autre Service",
+    badgeText: "Service",
+    badgeClass: "bg-gray-100 text-gray-800 border-gray-200",
+    defaultName: "Service Web Déployé",
+    defaultTech: "Instance Ravel-C",
+    defaultUrl: ""
+  }
+};
+
+// Default instances: Pre-loaded with the Starter client's setup
+let clientInstances = [
+  {
+    type: 'api',
+    name: 'API Backend Principal',
+    tech: 'Node.js / Express (App dynamique 1/1)',
+    url: 'api.client.com'
+  },
+  {
+    type: 'db',
+    name: 'Base de données Production',
+    tech: 'MongoDB Managée (1 Go inclus)',
+    url: 'cluster-01.ravel-c.net'
+  },
+  {
+    type: 'static',
+    name: 'Site Client Showcase / Vitrine',
+    tech: 'React.js (Site statique 1/5)',
+    url: 'www.client.com'
+  },
+  {
+    type: 'admin',
+    name: 'Espace Administration (Dashboard)',
+    tech: 'React.js (Site statique 2/5)',
+    url: 'admin.client.com'
   }
 ];
 
@@ -558,24 +725,28 @@ const PRESETS = {
   }
 };
 
-// Initialize Date Pickers with Today's Date
+// Initialize Date Pickers and restore states
 window.addEventListener('DOMContentLoaded', () => {
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
   document.getElementById('inpDateEmission').value = todayStr;
   
-  // Echeance par défaut : aujourd'hui ou dans 7 jours
+  // Échéance par défaut : 3 jours calendaires (cf. politique.html)
   const echeance = new Date(today);
-  echeance.setDate(echeance.getDate() + 5);
+  echeance.setDate(echeance.getDate() + 3);
   document.getElementById('inpDateEcheance').value = echeance.toISOString().split('T')[0];
 
-  // Période d'abonnement du 1er mois (ex: du mois dernier à aujourd'hui)
-  const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 30);
-  document.getElementById('inpPeriodStart').value = startDate.toISOString().split('T')[0];
-  document.getElementById('inpPeriodEnd').value = todayStr;
+  // Période d'abonnement : début hier (cas cliente starter) ou du mois
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const nextMonth = new Date(yesterday);
+  nextMonth.setDate(nextMonth.getDate() + 30);
+  
+  document.getElementById('inpPeriodStart').value = yesterday.toISOString().split('T')[0];
+  document.getElementById('inpPeriodEnd').value = nextMonth.toISOString().split('T')[0];
+  document.getElementById('inpCycleLabel').value = "1er mois d'abonnement";
 
-  // Generate an invoice number with Year & random sequence if not loaded
+  // Generate invoice number
   const year = today.getFullYear();
   const randSeq = Math.floor(1000 + Math.random() * 9000);
   document.getElementById('inpInvoiceNum').value = `RC-${year}-${randSeq}`;
@@ -589,10 +760,24 @@ window.addEventListener('DOMContentLoaded', () => {
       if (parsed.nif) document.getElementById('inpIssuerNif').value = parsed.nif;
       if (parsed.rccm) document.getElementById('inpIssuerRccm').value = parsed.rccm;
       if (parsed.address) document.getElementById('inpIssuerAddress').value = parsed.address;
+      if (parsed.email) document.getElementById('inpIssuerEmail').value = parsed.email;
+      if (parsed.phone) document.getElementById('inpIssuerPhone').value = parsed.phone;
+    } catch(e){}
+  }
+
+  // Restore last saved invoice if available
+  const savedInvoice = localStorage.getItem('ravelc_last_invoice');
+  if (savedInvoice) {
+    try {
+      const parsedInv = JSON.parse(savedInvoice);
+      if (parsedInv.instances && Array.isArray(parsedInv.instances)) {
+        clientInstances = parsedInv.instances;
+      }
     } catch(e){}
   }
 
   renderInputItems();
+  renderInstancesInputs();
   updateInvoice();
 });
 
@@ -667,6 +852,269 @@ function applyPreset(key) {
   };
   renderInputItems();
   updateInvoice();
+}
+
+// ----------------------------------------------------
+// INSTANCES & SERVICES MANAGEMENT (GENERIC & PRESETS)
+// ----------------------------------------------------
+
+function renderInstancesInputs() {
+  const container = document.getElementById('instancesContainer');
+  const countBadge = document.getElementById('badgeInstancesCount');
+  if (countBadge) countBadge.innerText = clientInstances.length;
+  
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (clientInstances.length === 0) {
+    container.innerHTML = `
+      <div class="text-xs text-[var(--mu)] italic p-3 text-center border border-dashed border-[var(--ln)] rounded-xl">
+        Aucune instance configurée. Utilisez les boutons ci-dessus pour en ajouter ou charger un cas client type.
+      </div>
+    `;
+    return;
+  }
+
+  clientInstances.forEach((inst, index) => {
+    const card = document.createElement('div');
+    card.className = "p-2.5 bg-[var(--sf-card)] border border-[var(--ln)] rounded-xl space-y-2 text-xs";
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-gray-200 text-[11px]">#${index + 1}</span>
+          <select class="custom-input !py-0.5 !px-2 text-[11px] w-auto" onchange="updateInstanceType(${index}, this.value)">
+            <option value="api" ${inst.type === 'api' ? 'selected' : ''}>API / Backend</option>
+            <option value="db" ${inst.type === 'db' ? 'selected' : ''}>Base MongoDB</option>
+            <option value="static" ${inst.type === 'static' ? 'selected' : ''}>Site Statique (Client)</option>
+            <option value="admin" ${inst.type === 'admin' ? 'selected' : ''}>Dashboard Admin</option>
+            <option value="dynamic" ${inst.type === 'dynamic' ? 'selected' : ''}>App Dynamique (Next.js)</option>
+            <option value="custom" ${inst.type === 'custom' ? 'selected' : ''}>Autre Service</option>
+          </select>
+        </div>
+        <button onclick="removeInstance(${index})" class="text-red-400 hover:text-red-300 font-bold text-xs px-1" title="Supprimer cette instance">✕</button>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] text-[var(--mu)] mb-0.5">Nom du composant</label>
+          <input type="text" class="custom-input text-xs !py-1" value="${escapeHtml(inst.name)}" placeholder="Ex: API Backend" oninput="updateInstance(${index}, 'name', this.value)">
+        </div>
+        <div>
+          <label class="block text-[10px] text-[var(--mu)] mb-0.5">Techno / Précision</label>
+          <input type="text" class="custom-input text-xs !py-1" value="${escapeHtml(inst.tech)}" placeholder="Ex: Node.js / Express" oninput="updateInstance(${index}, 'tech', this.value)">
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] text-[var(--mu)] mb-0.5">URL / Domaine / Endpoint (optionnel)</label>
+        <input type="text" class="custom-input text-xs !py-1 mono-font" value="${escapeHtml(inst.url || '')}" placeholder="Ex: api.domaine.com" oninput="updateInstance(${index}, 'url', this.value)">
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateInstance(index, key, value) {
+  if (clientInstances[index]) {
+    clientInstances[index][key] = value;
+    updateInvoice();
+  }
+}
+
+function updateInstanceType(index, newType) {
+  if (clientInstances[index]) {
+    clientInstances[index].type = newType;
+    const conf = INSTANCE_CONFIG[newType] || INSTANCE_CONFIG.custom;
+    if (!clientInstances[index].name || clientInstances[index].name.includes("API") || clientInstances[index].name.includes("Base") || clientInstances[index].name.includes("Site")) {
+      clientInstances[index].name = conf.defaultName;
+    }
+    clientInstances[index].tech = conf.defaultTech;
+    renderInstancesInputs();
+    updateInvoice();
+  }
+}
+
+function addGenericInstance() {
+  clientInstances.push({
+    type: 'custom',
+    name: 'Nouveau Composant Web',
+    tech: 'Instance Ravel-C Cloud',
+    url: ''
+  });
+  renderInstancesInputs();
+  updateInvoice();
+}
+
+function quickAddInstance(type) {
+  const conf = INSTANCE_CONFIG[type] || INSTANCE_CONFIG.custom;
+  clientInstances.push({
+    type: type,
+    name: conf.defaultName,
+    tech: conf.defaultTech,
+    url: conf.defaultUrl
+  });
+  renderInstancesInputs();
+  updateInvoice();
+}
+
+function removeInstance(index) {
+  clientInstances.splice(index, 1);
+  renderInstancesInputs();
+  updateInvoice();
+}
+
+function clearAllInstances() {
+  if (confirm("Voulez-vous supprimer toutes les instances de cette facture ?")) {
+    clientInstances = [];
+    renderInstancesInputs();
+    updateInvoice();
+  }
+}
+
+// 1-Click Client Presets (Starter client & Business client)
+function applyClientPreset(presetKey) {
+  if (presetKey === 'starter_client') {
+    // 1. Client Details
+    document.getElementById('inpInvoiceNum').value = 'RC-2026-0042';
+    document.getElementById('inpClientName').value = 'Cliente Starter (Projet Web & Admin)';
+    document.getElementById('inpClientPhone').value = '+227 90 12 34 56';
+    document.getElementById('inpClientEmail').value = 'contact@client-starter.ne';
+    document.getElementById('inpClientAddress').value = 'Quartier Plateau, Niamey';
+    document.getElementById('inpStatus').value = 'PAID';
+
+    // Set dates: started yesterday
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yStr = yesterday.toISOString().split('T')[0];
+    document.getElementById('inpDateEmission').value = yStr;
+    document.getElementById('inpPeriodStart').value = yStr;
+    const nextMonth = new Date(yesterday);
+    nextMonth.setDate(nextMonth.getDate() + 30);
+    document.getElementById('inpPeriodEnd').value = nextMonth.toISOString().split('T')[0];
+    document.getElementById('inpDateEcheance').value = yesterday.toISOString().split('T')[0];
+    document.getElementById('inpCycleLabel').value = "1er mois d'abonnement (Starter)";
+
+    // Apply Starter formula
+    applyPreset('starter');
+
+    // 4 instances for this client
+    clientInstances = [
+      {
+        type: 'api',
+        name: 'API Backend Principal',
+        tech: 'Node.js / Express (Dyn. App 1/1)',
+        url: 'api.client.com'
+      },
+      {
+        type: 'db',
+        name: 'Base de données Production',
+        tech: 'MongoDB Managée (Quota 1 Go inclus)',
+        url: 'cluster-01.ravel-c.net'
+      },
+      {
+        type: 'static',
+        name: 'Site Client Vitrine (Showcase)',
+        tech: 'React.js (Site statique 1/5)',
+        url: 'www.client.com'
+      },
+      {
+        type: 'admin',
+        name: 'Portail Administration (Admin)',
+        tech: 'React.js (Site statique 2/5)',
+        url: 'admin.client.com'
+      }
+    ];
+
+    renderInstancesInputs();
+    updateInvoice();
+  } else if (presetKey === 'business_client') {
+    // Business client details
+    document.getElementById('inpInvoiceNum').value = 'RC-2026-0089';
+    document.getElementById('inpClientName').value = 'Client Business (Next.js & REST API)';
+    document.getElementById('inpClientPhone').value = '+227 96 78 90 12';
+    document.getElementById('inpClientEmail').value = 'tech@entreprise-business.ne';
+    document.getElementById('inpClientAddress').value = 'Zone Industrielle, Niamey';
+    document.getElementById('inpStatus').value = 'PAID';
+
+    const today = new Date();
+    const tStr = today.toISOString().split('T')[0];
+    document.getElementById('inpDateEmission').value = tStr;
+    document.getElementById('inpPeriodStart').value = tStr;
+    const nextMonth = new Date(today);
+    nextMonth.setDate(nextMonth.getDate() + 30);
+    document.getElementById('inpPeriodEnd').value = nextMonth.toISOString().split('T')[0];
+    document.getElementById('inpDateEcheance').value = tStr;
+    document.getElementById('inpCycleLabel').value = "1er mois d'abonnement (Business)";
+
+    // Apply Business formula
+    applyPreset('business');
+
+    // 3 instances for this client
+    clientInstances = [
+      {
+        type: 'api',
+        name: 'Backend API REST',
+        tech: 'Node.js / Express (App dynamique 1/3)',
+        url: 'api.entreprise.ne'
+      },
+      {
+        type: 'dynamic',
+        name: 'Application Web Principale',
+        tech: 'Next.js SSR / Hybride (App dynamique 2/3)',
+        url: 'app.entreprise.ne'
+      },
+      {
+        type: 'db',
+        name: 'Base de données MongoDB Dédiée',
+        tech: 'MongoDB 5 Go + Sauvegardes quotidiennes (1/2)',
+        url: 'mongo-prod.ravel-c.net'
+      }
+    ];
+
+    renderInstancesInputs();
+    updateInvoice();
+  }
+}
+
+// Render instances on the A4 printable invoice
+function renderInstancesView() {
+  const section = document.getElementById('viewInstancesSection');
+  const list = document.getElementById('viewInstancesList');
+  const badge = document.getElementById('viewInstancesBadge');
+
+  if (!section || !list) return;
+
+  if (clientInstances.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+  if (badge) badge.innerText = `${clientInstances.length} instance${clientInstances.length > 1 ? 's' : ''} active${clientInstances.length > 1 ? 's' : ''}`;
+
+  list.innerHTML = '';
+  clientInstances.forEach(inst => {
+    const conf = INSTANCE_CONFIG[inst.type] || INSTANCE_CONFIG.custom;
+    const card = document.createElement('div');
+    card.className = "flex items-start gap-2.5 p-2 bg-white rounded-lg border border-gray-200";
+    card.innerHTML = `
+      <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border shrink-0 mt-0.5 ${conf.badgeClass}">${conf.badgeText}</span>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center justify-between gap-1">
+          <div class="font-bold text-gray-900 text-[11.5px] leading-tight">${escapeHtml(inst.name)}</div>
+          <span class="text-[9px] font-bold text-emerald-600 shrink-0">✓ Actif</span>
+        </div>
+        <div class="text-[10px] text-gray-500 leading-tight mt-0.5">
+          ${escapeHtml(inst.tech)}
+        </div>
+        ${inst.url ? `
+          <div class="text-[10px] font-mono text-gray-800 font-medium mt-1 pt-0.5 border-t border-gray-100 break-all flex items-center gap-1">
+            <span class="text-gray-400 font-sans text-[9px] uppercase tracking-wider">URL :</span>
+            <span class="text-blue-700">${escapeHtml(inst.url)}</span>
+          </div>
+        ` : ''}
+      </div>
+    `;
+    list.appendChild(card);
+  });
 }
 
 // Convert numbers to French words (pour montants en FCFA)
@@ -768,9 +1216,16 @@ function updateInvoice() {
   const issuerNif = document.getElementById('inpIssuerNif')?.value?.trim();
   const issuerRccm = document.getElementById('inpIssuerRccm')?.value?.trim();
   const issuerAddress = document.getElementById('inpIssuerAddress')?.value || 'Niamey, République du Niger';
+  const issuerEmail = document.getElementById('inpIssuerEmail')?.value?.trim() || 'contact@ravel-c.com';
+  const issuerPhone = document.getElementById('inpIssuerPhone')?.value?.trim() || '+227 87 72 75 01';
 
   document.getElementById('viewIssuerName').innerText = issuerName;
   document.getElementById('viewIssuerAddress').innerText = issuerAddress;
+
+  const contactParts = [];
+  if (issuerEmail) contactParts.push(`Email : ${issuerEmail}`);
+  if (issuerPhone) contactParts.push(`Tél / WhatsApp : ${issuerPhone}`);
+  document.getElementById('viewIssuerContact').innerText = contactParts.join(' · ');
 
   const legalParts = [];
   if (issuerNif) legalParts.push(`NIF : ${issuerNif}`);
@@ -836,6 +1291,9 @@ function updateInvoice() {
     if (payTitle) payTitle.innerHTML = `Coordonnées de règlement`;
   }
 
+  // Update Instances preview on A4
+  renderInstancesView();
+
   // Update Table & Totals
   const tbody = document.getElementById('viewTableBody');
   tbody.innerHTML = '';
@@ -847,13 +1305,13 @@ function updateInvoice() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="py-3 pr-4">
+      <td class="py-2.5 pr-4">
         <div class="font-bold text-gray-900">${escapeHtml(item.description)}</div>
         ${item.details ? `<div class="text-[11px] text-gray-500 mt-0.5 leading-normal">${escapeHtml(item.details)}</div>` : ''}
       </td>
-      <td class="py-3 text-center font-medium text-gray-700">${item.quantity}</td>
-      <td class="py-3 text-right font-medium text-gray-700">${formatFCFA(item.unitPrice)}</td>
-      <td class="py-3 text-right font-bold text-gray-900">${formatFCFA(lineTotal)}</td>
+      <td class="py-2.5 text-center font-medium text-gray-700">${item.quantity}</td>
+      <td class="py-2.5 text-right font-medium text-gray-700">${formatFCFA(item.unitPrice)}</td>
+      <td class="py-2.5 text-right font-bold text-gray-900">${formatFCFA(lineTotal)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -880,7 +1338,13 @@ function shareWhatsApp() {
   const period = getFormattedPeriod();
   const payPhone = document.getElementById('inpPaymentPhone').value;
 
-  const msg = `Bonjour ${clientName},\n\nVoici votre facture certifiée Ravel-C Cloud n° *${num}* d'un montant de *${total}* pour votre abonnement (${period}).\n\nRèglement par Mobile Money (Orange Money / Airtel Money) au : *${payPhone}* (Bénéficiaire : SmartLimb / Ravel-C).\n\nMerci de votre confiance !\nL'équipe Ravel-C Cloud / SmartLimb.`;
+  let instancesSummary = "";
+  if (clientInstances && clientInstances.length > 0) {
+    instancesSummary = `\n\n*Périmètre des services couverts (${clientInstances.length} instances actives) :*\n` +
+      clientInstances.map(i => `• [${i.type.toUpperCase()}] ${i.name} (${i.tech})${i.url ? ` → ${i.url}` : ''}`).join("\n");
+  }
+
+  const msg = `Bonjour ${clientName},\n\nVoici votre facture certifiée Ravel-C Cloud n° *${num}* d'un montant de *${total}* pour votre abonnement (${period}).${instancesSummary}\n\nRèglement par Mobile Money (Orange Money / Airtel Money) au : *${payPhone}* (Bénéficiaire : SmartLimb / Ravel-C).\n\nMerci de votre confiance !\nL'équipe Ravel-C Cloud / SmartLimb.`;
 
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
@@ -903,6 +1367,7 @@ function saveToStorage() {
       nif: document.getElementById('inpClientNif').value
     },
     items: items,
+    instances: clientInstances,
     payment: {
       phone: document.getElementById('inpPaymentPhone').value,
       holder: document.getElementById('inpPaymentHolder').value,
@@ -912,13 +1377,15 @@ function saveToStorage() {
 
   const issuerData = {
     name: document.getElementById('inpIssuerName')?.value,
+    email: document.getElementById('inpIssuerEmail')?.value,
+    phone: document.getElementById('inpIssuerPhone')?.value,
     nif: document.getElementById('inpIssuerNif')?.value,
     rccm: document.getElementById('inpIssuerRccm')?.value,
     address: document.getElementById('inpIssuerAddress')?.value
   };
   localStorage.setItem('ravelc_issuer_info', JSON.stringify(issuerData));
   localStorage.setItem('ravelc_last_invoice', JSON.stringify(invoiceData));
-  alert('Facture et coordonnées de SmartLimb sauvegardées avec succès dans votre navigateur !');
+  alert('Facture, liste des instances et coordonnées sauvegardées avec succès dans votre navigateur !');
 }
 
 function resetDefaults() {
